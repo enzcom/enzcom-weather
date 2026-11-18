@@ -1,0 +1,28 @@
+name: Validate
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: home-assistant/actions/hassfest@86d4564712fa02543c808e3a693dd04f9d3f8361
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: hacs/action@1ebf01c408f29afcb6406bd431bc98fd8cbb15aa
+        with:
+          category: integration
+  runtime:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ["2026.10.2", "2026.11.2"]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Actual Home Assistant runtime, network disabled
+        run: |
+          docker pull ghcr.io/home-assistant/home-assistant:${{ matrix.version }}
+          docker run --rm --network none --read-only --tmpfs /tmp:mode=1777,size=128m --cap-drop ALL --security-opt no-new-privileges:true -v "$PWD:/work:ro" -w /work -e PYTHONPATH=/work -e PYTHONDONTWRITEBYTECODE=1 ghcr.io/home-assistant/home-assistant:${{ matrix.version }} python -m unittest discover -s tests -v

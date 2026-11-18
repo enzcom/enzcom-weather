@@ -1,0 +1,14 @@
+{
+  "domain": "enzcom_weather",
+  "name": "ENZCOM // Weather",
+  "codeowners": [
+    "@enzcom"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/enzcom/enzcom-weather",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/enzcom/enzcom-weather/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

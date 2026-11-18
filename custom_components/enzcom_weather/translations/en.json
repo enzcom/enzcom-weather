@@ -1,0 +1,71 @@
+{
+  "title": "ENZCOM // Weather",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Find a location",
+        "description": "Choose a location. ENZCOM // Weather retrieves public weather data for it. No API key required. Add more locations as separate integration entries. [Privacy](https://weather.enzcom.cloud/datenschutz)",
+        "data": {
+          "query": "Location"
+        }
+      },
+      "place": {
+        "title": "Select location",
+        "data": {
+          "place_id": "Location"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Weather service unavailable. Please try again.",
+      "no_places": "No locations found. Please refine your search.",
+      "rate_limited": "Please wait before trying again.",
+      "invalid_place": "Please select a location from the results."
+    },
+    "abort": {
+      "already_configured": "This location is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "pressure": {
+        "name": "Pressure"
+      },
+      "wind_speed": {
+        "name": "Wind speed"
+      },
+      "wind_gust": {
+        "name": "Wind gusts"
+      },
+      "wind_direction": {
+        "name": "Wind direction"
+      },
+      "precipitation": {
+        "name": "Rainfall in reporting interval"
+      },
+      "precipitation_probability": {
+        "name": "Precipitation probability next hour"
+      },
+      "visibility": {
+        "name": "Visibility"
+      },
+      "fetched_at": {
+        "name": "Data retrieved"
+      },
+      "status": {
+        "name": "Data availability",
+        "state": {
+          "current": "Current",
+          "stale": "Stale",
+          "unavailable": "Unavailable"
+        }
+      }
+    }
+  }
+}

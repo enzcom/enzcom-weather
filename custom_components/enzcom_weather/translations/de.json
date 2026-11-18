@@ -1,0 +1,71 @@
+{
+  "title": "ENZCOM // Weather",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ort suchen",
+        "description": "Wähle deinen Ort. ENZCOM // Weather ruft öffentliche Wetterdaten für diesen Ort ab. Kein API-Schlüssel erforderlich. Weitere Orte lassen sich als eigene Integrationseinträge hinzufügen. [Datenschutz](https://weather.enzcom.cloud/datenschutz)",
+        "data": {
+          "query": "Ort"
+        }
+      },
+      "place": {
+        "title": "Ort auswählen",
+        "data": {
+          "place_id": "Ort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Wetterdienst momentan nicht erreichbar. Bitte erneut versuchen.",
+      "no_places": "Kein Ort gefunden. Bitte genauer suchen.",
+      "rate_limited": "Bitte etwas warten und erneut versuchen.",
+      "invalid_place": "Bitte einen Ort aus der Ergebnisliste wählen."
+    },
+    "abort": {
+      "already_configured": "Dieser Ort ist bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "pressure": {
+        "name": "Luftdruck"
+      },
+      "wind_speed": {
+        "name": "Windgeschwindigkeit"
+      },
+      "wind_gust": {
+        "name": "Böen"
+      },
+      "wind_direction": {
+        "name": "Windrichtung"
+      },
+      "precipitation": {
+        "name": "Regenmenge im Mess-/Vorhersageintervall"
+      },
+      "precipitation_probability": {
+        "name": "Regenwahrscheinlichkeit nächste Stunde"
+      },
+      "visibility": {
+        "name": "Sichtweite"
+      },
+      "fetched_at": {
+        "name": "Datenstand"
+      },
+      "status": {
+        "name": "Datenverfügbarkeit",
+        "state": {
+          "current": "Aktuell",
+          "stale": "Veraltet",
+          "unavailable": "Nicht erreichbar"
+        }
+      }
+    }
+  }
+}

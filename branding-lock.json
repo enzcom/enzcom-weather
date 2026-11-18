@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "consumer": "weather-home-assistant",
+  "assets": {
+    "weather.app-icon": {
+      "source": "ENZCOM-Weather-20261025/weather.svg",
+      "sha256": "65198b72793361adec3496aeb2ac67dfd6eb68e3dd66c7565f13460bdf4e8cb7",
+      "role": "app-icon",
+      "approval": "ENZCOM-Weather-20261025/APPROVAL.md",
+      "target": "custom_components/enzcom_weather/brand/weather.svg",
+      "url": "/custom_components/enzcom_weather/brand/weather.svg?v=65198b72793361adec3496aeb2ac67dfd6eb68e3dd66c7565f13460bdf4e8cb7"
+    }
+  },
+  "htmlBindings": [],
+  "surfaceKind": "native",
+  "nativeBindings": [
+    {
+      "path": "README.md",
+      "asset": "weather.app-icon"
+    }
+  ]
+}
