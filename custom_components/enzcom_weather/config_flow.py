@@ -30,7 +30,7 @@ class EnzcomWeatherConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "rate_limited"
             except WeatherError:
                 errors["base"] = "cannot_connect"
-        return self.async_show_form(step_id="user", data_schema=vol.Schema({
+        return self.async_show_form(step_id="user", description_placeholders={"privacy_url": "https://weather.enzcom.cloud/datenschutz"}, data_schema=vol.Schema({
             vol.Required("query"): selector.TextSelector(selector.TextSelectorConfig())}), errors=errors)
 
     async def async_step_place(self, user_input=None):

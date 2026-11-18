@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Ort suchen",
-        "description": "Wähle deinen Ort. ENZCOM // Weather ruft öffentliche Wetterdaten für diesen Ort ab. Kein API-Schlüssel erforderlich. Weitere Orte lassen sich als eigene Integrationseinträge hinzufügen. [Datenschutz](https://weather.enzcom.cloud/datenschutz)",
+        "description": "Wähle deinen Ort. ENZCOM // Weather ruft öffentliche Wetterdaten für diesen Ort ab. Kein API-Schlüssel erforderlich. Weitere Orte lassen sich als eigene Integrationseinträge hinzufügen. [Datenschutz]({privacy_url})",
         "data": {
           "query": "Ort"
         }

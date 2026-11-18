@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Find a location",
-        "description": "Choose a location. ENZCOM // Weather retrieves public weather data for it. No API key required. Add more locations as separate integration entries. [Privacy](https://weather.enzcom.cloud/datenschutz)",
+        "description": "Choose a location. ENZCOM // Weather retrieves public weather data for it. No API key required. Add more locations as separate integration entries. [Privacy]({privacy_url})",
         "data": {
           "query": "Location"
         }
