@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from types import SimpleNamespace, MappingProxyType
 import unittest
+import threading
+from zoneinfo import ZoneInfo
 from unittest.mock import AsyncMock, Mock, patch
 
 from homeassistant.core import HomeAssistant
@@ -49,7 +51,7 @@ class Conversion(unittest.TestCase):
         self.assertEqual(rows[0]['native_precipitation'],1)
 
     def test_daily_partial_totals_and_incomplete_extrema_not_invented(self):
-        rows=model.daily(fixture())
+        rows=model.daily(fixture(), ZoneInfo("Europe/Berlin"))
         self.assertIsNone(rows[0]['native_precipitation'])
         self.assertEqual(rows[0]['native_temperature'],14)
         self.assertEqual(rows[1]['native_precipitation'],6)
@@ -58,7 +60,7 @@ class Conversion(unittest.TestCase):
 
     def test_daily_dst(self):
         data=fixture();data['daily']=[{'date':'2026-10-25'},{'date':'2026-10-26'}]
-        rows=model.daily(data)
+        rows=model.daily(data, ZoneInfo("Europe/Berlin"))
         self.assertEqual(rows[0]['datetime'],'2026-10-24T22:00:00+00:00')
         self.assertEqual(rows[1]['datetime'],'2026-10-25T23:00:00+00:00')
 
@@ -154,6 +156,52 @@ class Lifecycle(unittest.IsolatedAsyncioTestCase):
         with patch.object(WeatherClient,'weather',return_value=fixture()):await self.entry.runtime_data.async_refresh()
         self.assertTrue(entity.available);self.assertEqual(status.native_value,'current')
         self.assertTrue(await async_unload_entry(self.hass,self.entry))
+
+    async def test_daily_awaits_zone_and_retains_local_midnight_across_dst(self):
+        data=fixture();data['daily']=[{'date':day} for day in ['2026-03-29','2026-03-30','2026-10-25','2026-10-26']]
+        zone=ZoneInfo('Europe/Berlin')
+        with patch.object(WeatherClient,'weather',return_value=data):await async_setup_entry(self.hass,self.entry)
+        e=weather.EnzcomWeather(self.entry.runtime_data)
+        with patch.object(weather.dt_util,'async_get_time_zone',new=AsyncMock(return_value=zone)) as resolve:
+            rows=await e.async_forecast_daily()
+            resolve.assert_awaited_once_with('Europe/Berlin')
+        self.assertEqual([r['datetime'] for r in rows],['2026-03-28T23:00:00+00:00','2026-03-29T22:00:00+00:00','2026-10-24T22:00:00+00:00','2026-10-25T23:00:00+00:00'])
+
+    async def test_daily_invalid_zone_and_unavailable(self):
+        data=fixture()
+        with patch.object(WeatherClient,'weather',return_value=data):await async_setup_entry(self.hass,self.entry)
+        e=weather.EnzcomWeather(self.entry.runtime_data)
+        for name in [None,'',42]:
+            data['place']['timezone']=name
+            with patch.object(weather.dt_util,'async_get_time_zone',new=AsyncMock()) as resolve:
+                self.assertEqual(await e.async_forecast_daily(),[]);resolve.assert_not_awaited()
+        data['place']['timezone']='Invalid/ENZCOM'
+        self.assertEqual(await e.async_forecast_daily(),[])
+        data['stale']=True
+        with patch.object(weather.dt_util,'async_get_time_zone',new=AsyncMock()) as resolve:
+            self.assertIsNone(await e.async_forecast_daily());resolve.assert_not_awaited()
+
+    async def test_daily_timezone_lookup_runs_off_event_loop(self):
+        data=fixture();data['place']['timezone']='Pacific/Chatham'
+        with patch.object(WeatherClient,'weather',return_value=data):await async_setup_entry(self.hass,self.entry)
+        e=weather.EnzcomWeather(self.entry.runtime_data);loop_thread=threading.get_ident();calls=[]
+        def resolve(name):
+            calls.append(threading.get_ident());self.assertNotEqual(calls[-1],loop_thread)
+            return ZoneInfo(name)
+        with patch.object(weather.dt_util.zoneinfo,'ZoneInfo',side_effect=resolve):
+            rows=await e.async_forecast_daily()
+        self.assertTrue(calls);self.assertEqual(rows[0]['datetime'],'2026-11-17T10:15:00+00:00')
+
+    async def test_daily_snapshot_keeps_its_zone_during_refresh(self):
+        data=fixture()
+        with patch.object(WeatherClient,'weather',return_value=data):await async_setup_entry(self.hass,self.entry)
+        e=weather.EnzcomWeather(self.entry.runtime_data);zone=ZoneInfo('Europe/Berlin')
+        async def resolve(name):
+            updated=fixture();updated['place']['timezone']='America/New_York';updated['daily'][0]['date']='2026-11-20'
+            self.entry.runtime_data.async_set_updated_data(updated)
+            return zone
+        with patch.object(weather.dt_util,'async_get_time_zone',side_effect=resolve):rows=await e.async_forecast_daily()
+        self.assertEqual(rows[0]['datetime'],'2026-11-17T23:00:00+00:00')
 
     async def test_forecast_listener_notified(self):
         with patch.object(WeatherClient,'weather',return_value=fixture()):await async_setup_entry(self.hass,self.entry)

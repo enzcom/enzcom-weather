@@ -1,6 +1,5 @@
 """Conversion to native HA values without inventing unavailable forecasts."""
 from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .api import number, timestamp
 
@@ -70,10 +69,9 @@ def hourly(data, now=None):
     return output
 
 
-def daily(data):
-    try:
-        zone = ZoneInfo(data["place"]["timezone"])
-    except (KeyError, ValueError, ZoneInfoNotFoundError):
+def daily(data, zone):
+    """Convert with an already resolved zone; never load timezone files here."""
+    if zone is None:
         return []
     temperatures = {r.get("date"): r for r in data.get("temperature_daily", []) if isinstance(r, dict)}
     output = []

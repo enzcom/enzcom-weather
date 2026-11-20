@@ -2,6 +2,7 @@
 from homeassistant.components.weather import WeatherEntity, WeatherEntityFeature
 from homeassistant.const import UnitOfTemperature, UnitOfSpeed, UnitOfPressure, UnitOfLength
 from homeassistant.core import callback
+from homeassistant.util import dt as dt_util
 from .entity import WeatherBaseEntity
 from .model import value, bearing, condition, hourly, daily
 
@@ -51,7 +52,14 @@ class EnzcomWeather(WeatherBaseEntity, WeatherEntity):
         return hourly(self.coordinator.data) if self.available else None
 
     async def async_forecast_daily(self):
-        return daily(self.coordinator.data) if self.available else None
+        if not self.available:
+            return None
+        data = self.coordinator.data
+        name = data["place"].get("timezone")
+        if not isinstance(name, str) or not name:
+            return []
+        zone = await dt_util.async_get_time_zone(name)
+        return daily(data, zone) if self.available else None
 
     @callback
     def _handle_coordinator_update(self):

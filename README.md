@@ -35,7 +35,7 @@ kein Neustart nötig.
 
 ### Ohne Marketplace oder HACS
 
-Das ZIP `enzcom-weather-1.0.0.zip` aus den Releases enthält `custom_components/enzcom_weather/`.
+Das ZIP `enzcom-weather-1.0.1.zip` aus den Releases enthält `custom_components/enzcom_weather/`.
 Diesen Ordner vollständig in den Konfigurationsordner von Home Assistant kopieren,
 Home Assistant neu starten und die Integration wie oben hinzufügen. Vor Updates
 bestehenden Ordner sichern; bei manueller Installation Updates ebenfalls manuell einspielen.
@@ -68,7 +68,7 @@ unterschiedlich angibt. Fehlende Werte bleiben unbekannt.
 
 Wetter- und Sensorentitäten passen in die normalen Home-Assistant-Karten.
 Unsere Webdiagramme sind unter [ENZCOM // Weather](https://weather.enzcom.cloud)
-verfügbar; eine eigene Dashboard-Karte ist nicht Bestandteil von Version 1.0.0.
+verfügbar; eine eigene Dashboard-Karte ist nicht Bestandteil von Version 1.0.1.
 UV, Pollen, Luftqualität und PV werden in dieser Ausgabe noch nicht als Entitäten
 angeboten. Es werden keine Geräte geschaltet und keine Automationen angelegt.
 
